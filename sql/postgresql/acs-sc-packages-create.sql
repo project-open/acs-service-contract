@@ -12,6 +12,9 @@ begin
                 now(),
                 null,
                 null,
+                null,
+                ''t'',
+                p_contract_name,
                 null
             );
 
@@ -121,6 +124,9 @@ begin
                          now(),
                          null,
                          null,
+                         null,
+                         ''t'',
+                         p_operation_name,
                          null
                      );
 
@@ -224,6 +230,9 @@ begin
                 now(),
                 null,
                 null,
+                null,
+                ''t'',
+                p_impl_pretty_name,
                 null
             );
 
@@ -387,12 +396,13 @@ declare
     v_contract_name             varchar;
     v_impl_name                 varchar;
     v_count                     integer;
+    v_missing_op                varchar;
 begin
 
     v_contract_name := acs_sc_contract__get_name(p_contract_id);
     v_impl_name := acs_sc_impl__get_name(p_impl_id);
 
-    select count(*) into v_count
+    select count(*),min(operation_name) into v_count, v_missing_op
     from acs_sc_operations
     where contract_id = p_contract_id
     and operation_name not in (select impl_operation_name
@@ -401,7 +411,7 @@ begin
                                and impl_id = p_impl_id);
 
     if v_count > 0 then
-        raise exception ''Binding of % to % failed since certain operations are not implemented.'', v_contract_name, v_impl_name;
+        raise exception ''Binding of % to % failed since certain operations are not implemented like: %.'', v_contract_name, v_impl_name, v_missing_op;
     end if;
 
     insert into acs_sc_bindings (
