@@ -148,9 +148,9 @@ ad_proc -public acs_sc::impl::get_id {
     if the contract is not specified.
 } {
     if {[exists_and_not_null contract]} {
-        return [db_string select_impl_id_with_contract {}]
+        return [db_string select_impl_id_with_contract {} -default ""]
     } else {
-        return [db_string select_impl_id {}]
+        return [db_string select_impl_id {} -default ""]
     }
 }
 
