@@ -9,6 +9,13 @@ db_foreach impl_operation {
            acs_sc_impl_aliases ia
     where  ia.impl_id = b.impl_id
 } {
-    # This creates the AcsSc.Contract.Operation.Impl wrapper proc for this implementation
-    acs_sc_proc $impl_contract_name $impl_operation_name $impl_name $impl_alias $impl_pl
+    # fraber 130717:
+    # Fixed broken LDAP issue, because a database error in one entry
+    # stopped the processing of all other entries
+    if {[catch {
+	# This creates the AcsSc.Contract.Operation.Impl wrapper proc for this implementation
+        acs_sc_proc $impl_contract_name $impl_operation_name $impl_name $impl_alias $impl_pl
+    } err_msg]} {
+        ns_log error [ad_log_stack_trace]
+    }
 }
